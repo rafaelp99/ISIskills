@@ -1,0 +1,28 @@
+{
+  "name": "package",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rafaelp99/ISIskills.git"
+  },
+  "author": "Rafael Pinto",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rafaelp99/ISIskills/issues"
+  },
+  "homepage": "https://github.com/rafaelp99/ISIskills#readme",
+  "dependencies": {
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "mysql": "^2.18.1",
+    "node-fetch": "^2.6.1",
+    "vue": "^2.6.12"
+  }
+}
