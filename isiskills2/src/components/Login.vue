@@ -38,8 +38,9 @@ export default {
        var id_token = user.getAuthResponse().id_token;
       console.log("ID Token: " + id_token);
       console.log(profile)
-
+   
     }
+ 
   }
 }
 </script>
