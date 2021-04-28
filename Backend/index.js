@@ -20,9 +20,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   res.send("");
 });
-app.post("/criarClient", (req, res) =>{
-
-})
+app.post("/criarClient", controller.createCliente)
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8081;

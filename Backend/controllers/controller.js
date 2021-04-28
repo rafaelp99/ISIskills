@@ -2,15 +2,15 @@ const request = require('request');
 module.exports = {
     createCliente: function(req, res) {
 let email = req.body.email;
-let firstname = firstname;
-let lastname = lastname;
-let website = website;
-let company = company;
-let phone = phone;
-let rua = rua;
-let cidade = cidade;
-let estado = estado;
-let zip = zip;
+let firstname = req.body.firstname;
+let lastname = req.body.lastname;
+let website = req.body.website;
+let company = req.body.company;
+let phone = req.body.phone;
+let rua = req.body.rua;
+let cidade = req.body.cidade;
+let estado = req.body.estado;
+let zip = req.body.zip;
 
 
 
@@ -43,27 +43,27 @@ let options = {
       },
       {
         "property": "company",
-        "value": "SportsCo"
+        "value": company
       },
       {
         "property": "phone",
-        "value": "555-122-2424"
+        "value": phone
       },
       {
         "property": "address",
-        "value": "20 First Street"
+        "value": rua
       },
       {
         "property": "city",
-        "value": "London"
+        "value": cidade
       },
       {
         "property": "state",
-        "value": "LN"
+        "value": estado
       },
       {
         "property": "zip",
-        "value": "02240"
+        "value": zip
       }
     ]
   })
