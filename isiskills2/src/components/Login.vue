@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import {mapActions} from 'vuex'
 
 export default {
   mounted() {
@@ -30,14 +31,31 @@ export default {
       onsuccess: this.onSignIn
     })
   },
+  data() {
+    return{ 
+      data :{}
+    }
+  },
   methods: {
+    ...mapActions({
+      signIn: 'auth/signIn'
+    }),
     onSignIn (user) {
       // eslint-disable-next-line no-unused-vars
-
+      
       const profile = user.getBasicProfile()
+      const info = {
+      name: '',
+      email: '',
+      token: ''}
        var id_token = user.getAuthResponse().id_token;
       console.log("ID Token: " + id_token);
-      console.log(profile)
+      info.name= profile.getName();
+      info.email= profile.getEmail();
+      info.token= id_token;
+      this.data = info;
+      console.log(this.data)
+      this.signIn(this.data)
    
     }
  
@@ -59,11 +77,7 @@ export default {
   background: url('../assets/loginisi.jpg') no-repeat center;
   background-size: cover;
 }
-@media only screen and (max-width: 1200px) {
-  .col-7 {
-    display: none;
-  }
-}
+
 .col-5 h1{
   margin-top: 15%;
   text-align: center;
