@@ -1,15 +1,21 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import Auth from './auth'
+import {createStore} from 'vuex'
 
-Vue.use(Vuex)
+const state = {
+    cookie: "",
+    logado: ""
+}
+const mutations = {
 
-export default new Vuex.Store({
-    state: {},
-    mutations: {},
-    actions: {},
-    modules:{
-        Auth
-    }
+}
+
+
+export default createStore({
+    state: {
+
+    },
+    mutations: {
+
+    },
+
 })
  

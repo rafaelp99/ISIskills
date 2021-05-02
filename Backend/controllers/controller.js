@@ -1,4 +1,9 @@
 const request = require('request');
+const db = require('../config/connect')
+const session = require('express-session')
+
+
+
 module.exports = {
     createCliente: function(req, res) {
 let email = req.body.email;
@@ -13,12 +18,12 @@ let estado = req.body.estado;
 let zip = req.body.zip;
 
 
-
-
+//2cea01fe-c720-43a4-97dd-d11bcde530d9
+//2f61c28e-f4ef-4587-b8ab-cd6c94cc4ec2
 
 let options = {
   'method': 'POST',
-  'url': 'https://api.hubapi.com/contacts/v1/contact/?hapikey=2f61c28e-f4ef-4587-b8ab-cd6c94cc4ec2',
+  'url': 'https://api.hubapi.com/contacts/v1/contact/?hapikey=2cea01fe-c720-43a4-97dd-d11bcde530d9',
   'headers': {
     'Content-Type': 'application/json',
     'Cookie': '__cfduid=d520d7a241ebf1801b7c7f5361c2b3fce1619618102'
@@ -75,6 +80,37 @@ request(options, function (error, response) {
   console.log(response.body);
   res.send(response.body);
 });
+
+},
+login: function(req, res){
+
+
+    let token= req.body.token;
+    let user = {};
+    const {OAuth2Client} = require('google-auth-library');
+    const CLIENT_ID = '934006643177-me65hrlepv1hdq7bcbq1kbia2hlut7oq.apps.googleusercontent.com'
+
+    const client = new OAuth2Client(CLIENT_ID);
+
+    async function verify() {
+      const ticket = await client.verifyIdToken({
+          idToken: token,
+          audience: CLIENT_ID,  // Specify the CLIENT_ID of the app that accesses the backend
+      });
+      const payload = ticket.getPayload();
+      const userid = payload['sub'];
+      user ={"email":  payload.email,
+      "nome": payload.name,
+      "token": token
+      } 
+      console.log(payload)
+    }
+    verify()
+    .then(()=>{ 
+        res.cookie('session-token', token, ";path=/");
+        res.send(user);
+    })
+    .catch(console.error);
 
 }
 }

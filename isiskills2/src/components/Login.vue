@@ -13,6 +13,7 @@
       <div id="google-signin-button"></div>
         </div>
         <div class="col-6">
+          <a @click="signOut()">Logout</a>
         </div>
       </div>
     </div>
@@ -24,6 +25,7 @@
 
 <script>
 import {mapActions} from 'vuex'
+import VueCookies from 'vue-cookies'
 
 export default {
   mounted() {
@@ -41,25 +43,46 @@ export default {
       signIn: 'auth/signIn'
     }),
     onSignIn (user) {
-      // eslint-disable-next-line no-unused-vars
       
-      const profile = user.getBasicProfile()
-      const info = {
-      name: '',
-      email: '',
-      token: ''}
-       var id_token = user.getAuthResponse().id_token;
-      console.log("ID Token: " + id_token);
-      info.name= profile.getName();
-      info.email= profile.getEmail();
-      info.token= id_token;
-      this.data = info;
-      console.log(this.data)
-      this.signIn(this.data)
-   
+      let id_token = user.getAuthResponse().id_token;
+      this.enviarToken(id_token)
+      
+  },
+  async enviarToken(token){
+    let rota = this;
+    let data = {}
+    try{
+      const req = await fetch('http://localhost:8080/login', {
+            method: 'POST',
+            headers: { 'Content-Type':'application/json'},
+            body: JSON.stringify({"token": token}),
+            credentials: 'same-origin'
+      })
+      .then(function(response){
+        if(response.status == 200){
+          //document.cookie= 'session-token='+ token +";path=/"
+          VueCookies.set('session-token', token, '1h')
+          //rota.$router.replace('/cursos') 
+          rota.$store.state.cookie = VueCookies.get('session-token')
+          rota.$store.state.logado = true;
+          rota.$router.replace('/cursos') 
+        }
+      } )
+      }
+    catch{
+      console.log('erro')
     }
+  },
+  signOut() {
+        var auth2 = window.gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function () {
+        console.log('User signed out.');
+        });
+    }
+    
  
-  }
+  
+}
 }
 </script>
 

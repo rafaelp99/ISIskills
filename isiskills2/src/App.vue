@@ -1,15 +1,15 @@
 <template>
-  <div id="nav">
+  <div id="nav" >
    <div class="container">
     <nav class="nav" id="nav1">
         <div class="container">
             <div class="logo">
                 <router-link to="/cursos">ISISkills</router-link>
             </div>
-            <div id="mainListDiv" class="main_list">
+            <div id="mainListDiv" class="main_list" v-if="$store.state.logado">
                 <ul class="navlinks" style="display:flex">
-                    <li><router-link to="/about">About</router-link></li>
-                    <li><router-link to="/"><i class="fas fa-sign-in-alt"></i></router-link></li>
+                    <li><router-link to="/perfil">Perfil</router-link></li>
+                    <li @click="signOut()"><a @click="signOut()"><i class="fas fa-sign-in-alt"></i></a></li>
                     
                 </ul>
             </div>
@@ -27,9 +27,27 @@
 </template>
 <script>
 
+import VueCookies from 'vue-cookies'
+import store from './store'
 
-export default{
+export default {
+ 
+methods: {
+    signOut(){
+  
+        VueCookies.remove('session-token')
+        this.$store.state.token = {}
+        this.$store.state.logado = false;
+        var auth2 = window.gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function () {
+        console.log('User signed out.');
+        });
+        this.$router.go('/')
+        console.log(this.$store.state.logado)
+       
+    }
 
+}
 
 }
 </script>

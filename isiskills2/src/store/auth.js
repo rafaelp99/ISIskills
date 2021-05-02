@@ -32,8 +32,17 @@ export default{
     },
     actions:{
         async signIn(_, credentials){
-            dispatch('attempt', credentials)
-        },
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'http:127.0.0.1/login');
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onload = function() {
+                console.log('Signed in as: ' + xhr.responseText);
+                if(xhr.responseText == 'success'){
+                    console.log('sucesso')
+                }
+            };
+            xhr.send(JSON.stringify({token : credentials}));
+          },
         async attempt ({commit}, data){
             commit('SET_TOKEN', data.token)
             commit('SET_USER', data)
