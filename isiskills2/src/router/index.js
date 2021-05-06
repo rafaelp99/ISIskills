@@ -55,9 +55,15 @@ const routes = [
     path: '/',
     name: 'Login',
     component: () => import(/* webpackChunkName: "about" */ '../components/Login.vue'),
-  
+    beforeEnter: (to, from, next) =>{
+      if(store.state.logado){
+        next('/cursos')
+      }
+      else{
+        next()
+      }
   },
-
+  }
 
 ]
 
