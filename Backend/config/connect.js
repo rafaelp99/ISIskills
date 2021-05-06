@@ -8,3 +8,4 @@ module.exports = {
         'password': '6VY3zz1Z8U'    
     })
 };
+

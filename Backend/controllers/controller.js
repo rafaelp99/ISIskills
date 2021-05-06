@@ -1,7 +1,7 @@
 const request = require('request');
 const db = require('../config/connect')
 const session = require('express-session')
-
+const querys = require('../config/querys')
 
 
 module.exports = {
@@ -82,7 +82,7 @@ request(options, function (error, response) {
 });
 
 },
-login: function(req, res){
+login: function(req, res){   //npm install google-auth-library --save
 
 
     let token= req.body.token;
@@ -95,15 +95,29 @@ login: function(req, res){
     async function verify() {
       const ticket = await client.verifyIdToken({
           idToken: token,
-          audience: CLIENT_ID,  // Specify the CLIENT_ID of the app that accesses the backend
+          audience: CLIENT_ID,  //Specify the CLIENT_ID of the app that accesses the backend
       });
       const payload = ticket.getPayload();
       const userid = payload['sub'];
       user ={"email":  payload.email,
-      "nome": payload.name,
-      "token": token
+      "Primeiro_nome": payload.given_name,
+      "Ultimo_nome": payload.family_name,
       } 
-      console.log(payload)
+      db.con.query(querys.GET_Utilizador, user.email, function (err, rows, fields){
+        if (!err){
+          if (rows.length == 0){
+            db.con.query(querys.INSERT_Utilizador, user, function(err, rows, fields){
+              if (!err){
+                res.status(200).json({error:null, response: rows}) 
+              } else {res.status(400).json({error: err.code})}
+            }
+            )
+          }
+          else {res.status(200).json({error:null, response: rows})}
+        }
+      })
+      console.log(payload),
+      console.log(res.body)
     }
     verify()
     .then(()=>{ 
@@ -112,5 +126,5 @@ login: function(req, res){
     })
     .catch(console.error);
 
-}
+},
 }
