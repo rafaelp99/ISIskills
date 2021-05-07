@@ -1,7 +1,7 @@
 const request = require('request');
-const db = require('../config/connect')
+const pool = require('../config/connect')
 const session = require('express-session')
-const querys = require('../config/querys')
+const queries = require('../config/queries')
 
 
 module.exports = {
@@ -99,32 +99,57 @@ login: function(req, res){   //npm install google-auth-library --save
       });
       const payload = ticket.getPayload();
       const userid = payload['sub'];
-      user ={"email":  payload.email,
-      "Primeiro_nome": payload.given_name,
-      "Ultimo_nome": payload.family_name,
+      user ={
+      Primeiro_nome: payload.given_name,
+      Ultimo_nome: payload.family_name,
+      email:  payload.email,
+      tipo: 1
       } 
-      db.con.query(querys.GET_Utilizador, user.email, function (err, rows, fields){
-        if (!err){
-          if (rows.length == 0){
-            db.con.query(querys.INSERT_Utilizador, user, function(err, rows, fields){
+      console.log(user)
+      //console.log(payload)
+      pool.query('SELECT Utilizador.Primeiro_nome, Utilizador.Ultimo_nome, Utilizador.email, Utilizador.tipo FROM Utilizador WHERE Utilizador.email=?', user.email, function (err, rows, fields){
+        if(!err){
+          if(rows.length==0){
+            pool.query('INSERT INTO Utilizador SET ?', user, function(err, rows, fields){
               if (!err){
                 res.status(200).json({error:null, response: rows}) 
-              } else {res.status(400).json({error: err.code})}
+              } else {res.status(400).json({error: err.code})
+            console.log(err)}
             }
             )
           }
-          else {res.status(200).json({error:null, response: rows})}
+          else{
+            res.status(200).json({error:null, response: rows})
+          }
+        }
+        else{
+          res.status(400)
+          console.log(err)
         }
       })
-      console.log(payload),
-      console.log(res.body)
+
     }
     verify()
-    .then(()=>{ 
-        res.cookie('session-token', token, ";path=/");
-        res.send(user);
-    })
-    .catch(console.error);
+   /* .then(
+      //db.con.query(queries.GET_Utilizador, user.email, function (err, rows, fields){
+      //if (!err){
+       // if (rows.length == 0){
+          db.con.query('INSERT INTO Utilizador SET ?', user, function(err, rows, fields){
+            if (!err){
+              res.status(200).json({error:null, response: rows}) 
+            } else {res.status(400).json({error: err.code})
+          console.log(err)}
+          }
+          )).catch(console.error);*/
+        //}
+       // else {res.status(200).json({error:null, response: rows})}
+     // }
+      //else{
+      // console.log(err)
+      //  console.log(user.email)
+     // }
+    //})//)
+   
 
 },
 }

@@ -58,13 +58,19 @@ export default {
             body: JSON.stringify({"token": token}),
             credentials: 'same-origin'
       })
-      .then(function(response){
-        if(response.status == 200){
+      .then(function(res){
+        if(res.status == 200){
           //document.cookie= 'session-token='+ token +";path=/"
           VueCookies.set('session-token', token, '1h')
           //rota.$router.replace('/cursos') 
           rota.$store.state.cookie = VueCookies.get('session-token')
           rota.$store.state.logado = true;
+          res.json().then(json=> {
+             json.response[0]
+             rota.$store.state.user= json.response[0]
+             console.log(rota.$store.state.user)
+            //rota.$store.state.user = json.response[0],
+          })
           rota.$router.replace('/cursos') 
         }
       } )

@@ -2,7 +2,13 @@ import {createStore} from 'vuex'
 
 const state = {
     cookie: "",
-    logado: ""
+    logado: "",
+    user: {
+        Primeiro_nome: "",
+        Ultimo_nome: "",
+        email: "",
+        tipo: ""
+    }
 }
 const mutations = {
 
