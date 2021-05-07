@@ -10,6 +10,11 @@ const state = {
         tipo: ""
     }
 }
+const getters = {
+    user(state){
+        return state.user;
+    }
+}
 const mutations = {
 
 }

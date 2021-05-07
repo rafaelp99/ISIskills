@@ -4,10 +4,11 @@
     <nav class="nav" id="nav1">
         <div class="container">
             <div class="logo">
-                <router-link to="/cursos">ISISkills</router-link>
+                <li><a href="#">ISISkills</a></li>
             </div>
             <div id="mainListDiv" class="main_list" v-if="$store.state.logado">
                 <ul class="navlinks" style="display:flex">
+                    <li><router-link to="/cursos">Cursos</router-link></li>
                     <li><router-link to="/perfil">Perfil</router-link></li>
                     <li @click="signOut()"><a @click="signOut()"><i class="fas fa-sign-in-alt"></i></a></li>
                     

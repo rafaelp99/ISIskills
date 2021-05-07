@@ -9,8 +9,8 @@ module.exports = {
 let email = req.body.email;
 let firstname = req.body.firstname;
 let lastname = req.body.lastname;
-let website = req.body.website;
-let company = req.body.company;
+let website = "Isi";
+let company = "ISi";
 let phone = req.body.phone;
 let rua = req.body.rua;
 let cidade = req.body.cidade;
@@ -75,10 +75,22 @@ let options = {
 
 };
 request(options, function (error, response) {
-  if (error) res.send(error);  
-  
+  if (error){
+    console.log('erro'); 
+  }
+  else{
   console.log(response.body);
-  res.send(response.body);
+  if(!JSON.parse(response.body).hasOwnProperty('error')){
+    res.send("sucesso");
+    console.log(JSON.parse(response.body));
+  }
+  else{
+    console.log(response.body)
+    res.status(400).send('erro')
+  }
+
+  }  
+
 });
 
 },
