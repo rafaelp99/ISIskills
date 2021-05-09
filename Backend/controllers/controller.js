@@ -23,7 +23,8 @@ let zip = req.body.zip;
 
 let options = {
   'method': 'POST',
-  'url': 'https://api.hubapi.com/contacts/v1/contact/?hapikey=2cea01fe-c720-43a4-97dd-d11bcde530d9',
+  'url': `https://api.hubapi.com/contacts/v1/contact/createOrUpdate/email/${email}/`,
+    qs: { hapikey: '2cea01fe-c720-43a4-97dd-d11bcde530d9' },
   'headers': {
     'Content-Type': 'application/json',
     'Cookie': '__cfduid=d520d7a241ebf1801b7c7f5361c2b3fce1619618102'
@@ -79,15 +80,8 @@ request(options, function (error, response) {
     console.log('erro'); 
   }
   else{
-  console.log(response.body);
-  if(!JSON.parse(response.body).hasOwnProperty('error')){
-    res.send("sucesso");
-    console.log(JSON.parse(response.body));
-  }
-  else{
     console.log(response.body)
-    res.status(400).send('erro')
-  }
+    res.status(200).send("sucesso")
 
   }  
 

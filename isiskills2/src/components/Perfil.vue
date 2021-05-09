@@ -1,7 +1,23 @@
 <template>
     <div class="container">
-        <h1>Bem, vindo</h1>
-    <div class="row">
+<nav class="navbar navbar-expand-sm bg-light">
+
+  <!-- Links -->
+  <ul class="navbar-nav">
+    <li class="nav-item">
+      <a class="nav-link" @click="mudarPag1" href="#">Dados Pessoais</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" @click="mudarPag2" href="#">Editar Perfil</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" @click="mudarPag3" href="#">Registar como Professor</a>
+    </li>
+  </ul>
+
+</nav>
+
+        <div class="row" v-if="pagina==2">
     <div class="form-group">  
         <label for="email">
                 Email
@@ -10,11 +26,11 @@
             <label for="firstname">
                 Primeiro Nome
             </label>
-            <input type="text" required v-model="form.firstname"> 
+            <input type="text" disabled required v-model="form.firstname"> 
             <label for="lastname">
                 Último nome
             </label>
-            <input type="text" required v-model="form.lastname"> 
+            <input type="text"  disabled required v-model="form.lastname"> 
         
             <label for="phone">
                 Telemóvel
@@ -36,19 +52,42 @@
                 Código Postal
             </label>
             <input type="text" required v-model="form.zip">
-            
+
             <div class="ml-auto" id="rowbtn">
                 <button class="btn btn-success float-right" @click.prevent="atualizarPerfil">Atualizar</button>
             </div>
+            <div class="ml-auto" id="rowbtn">
+                <button class="btn btn-danger float-right" @click="voltar">Voltar</button>
+            </div>    
+    </div>
+        </div>
+        <div v-else-if="pagina == 3">
+            <h1>Registar como Professor</h1>
+        </div>
+            <div class="row" id="pag1" v-else>
+        
+            <div class="col-6">
+                <p><b>Nome: </b> {{$store.state.user.Primeiro_nome + " " + $store.state.user.Ultimo_nome}}</p>
+                <p><b>Email: </b> {{$store.state.user.email}}</p>
+                <p><b>Telemóvel: </b> </p>
+                <p><b>Morada: </b> </p>
+                <p><b>Cidade: </b> </p>
+                <p><b>Código-Postal: </b> </p>
+                <p v-if="$store.state.user.tipo == 1"><b>É professor: </b> Não </p>
+                <p v-else><b>É professor: </b> Sim </p>
+                
 
+            </div>
+        </div>
     </div>
-    </div>
-    </div>  
+     
 </template>
 <script>
 import axios from 'axios'
 export default {
+    pagina: 1,
     computed: {
+        
         user:{
             get(){
                 return this.$store.state.user;
@@ -56,6 +95,7 @@ export default {
         }
     },
     mounted(){
+        
         console.log(this.$store.state.user)
         this.form.email = this.$store.state.user.email
         this.form.firstname= this.$store.state.user.Primeiro_nome 
@@ -77,34 +117,73 @@ export default {
     },
     methods: {
         atualizarPerfil(){
-            let response = axios.post('http://localhost:8080/criarClient', this.form)
-            if(response== 'sucesso'){
-                this.$swal('Dados atualizados');
+            let response = axios.post('http://localhost:8080/criarClient', this.form).
+            then(function(res){
+            if(res.status==200){
+                this.$swal('Atualizado')
+                this.$router.go('/perfil')
             }
             else{
-                    this.$swal('Erro')
+                this.$swal('Erro')
+            }
+            })
+        },
+        voltar(){
+             this.$nextTick(() => {
+                    this.$router.push('/cursos')
+                    
+      });
+        },
+        mudarPag1(){
+            this.pagina = 1;
+        },
+        mudarPag2(){
+            this.pagina = 2;
+             console.log(this.pagina)
+        },
+        mudarPag3(){
+            this.pagina = 3;
+             console.log(this.pagina)
+        },
+        verificaProfessor(){
+            if(this.$store.state.user.tipo== 1){
+                return false
+            }
+            else if(this.$store.state.user.tipo == 2){
+                return true
             }
         }
     }
 }
 </script>
 <style scoped>
+p{
+    font-size: 1.3rem;
+}
+p#titulo{
+    font-weight: bold;
+}
 .row{
     margin-right: 25%;
     margin-left: 25%;
 }
+#pag1.row{
+    margin-top: 2%;
+    margin-left: 10%;
+}
+
 #rowbtn.row{
     width: 100%;
     margin: 0%;
 }
 .form-group{
     
-    margin-top: 3%;
+    margin-top: 2%;
      
 }
 
 .form-group label{
-    font-size: 15px;
+    font-size: 1.3rem;
     font-weight: bolder;
     padding: 1%;
     margin-bottom: 0%;
@@ -121,7 +200,25 @@ export default {
 button{
     position: relative;
     margin-top: 3%;
+    margin-left: 2%;
     font-size: 1.4rem;
     font-family: "Quicksand", sans-serif
+}
+a.nav-link{
+    font-size: 1.4rem;
+    color: black;
+
+}
+a.nav-link :hover{
+    color: lightslategray;
+}
+
+li.nav-item{
+    padding-left: 1%;
+    padding-right: 1%;
+}
+ul.navbar-nav{
+    width: 100%;
+    margin-left: 5%;
 }
 </style>
