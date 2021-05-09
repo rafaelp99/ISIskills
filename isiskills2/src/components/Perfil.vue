@@ -117,11 +117,12 @@ export default {
     },
     methods: {
         atualizarPerfil(){
+            let that = this;
             let response = axios.post('http://localhost:8080/criarClient', this.form).
             then(function(res){
             if(res.status==200){
-                this.$swal('Atualizado')
-                this.$router.go('/perfil')
+                window.swal('Atualizado');
+                that.$router.go('/perfil')
             }
             else{
                 this.$swal('Erro')
@@ -130,7 +131,7 @@ export default {
         },
         voltar(){
              this.$nextTick(() => {
-                    this.$router.push('/cursos')
+                    this.pagina=1;
                     
       });
         },
