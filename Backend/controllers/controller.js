@@ -136,26 +136,96 @@ login: function(req, res){   //npm install google-auth-library --save
 
     }
     verify()
-   /* .then(
-      //db.con.query(queries.GET_Utilizador, user.email, function (err, rows, fields){
-      //if (!err){
-       // if (rows.length == 0){
-          db.con.query('INSERT INTO Utilizador SET ?', user, function(err, rows, fields){
-            if (!err){
-              res.status(200).json({error:null, response: rows}) 
-            } else {res.status(400).json({error: err.code})
-          console.log(err)}
-          }
-          )).catch(console.error);*/
-        //}
-       // else {res.status(200).json({error:null, response: rows})}
-     // }
-      //else{
-      // console.log(err)
-      //  console.log(user.email)
-     // }
-    //})//)
-   
+
 
 },
+criarProfessor: function(req, res){
+  let token;
+  console.log('a')
+  const client_id = process.env.CLIENT_ID;
+  const client_secret = process.env.CLIENT_SECRET;
+  const emailmoloni = process.env.EMAIL;
+  const password = process.env.PASSWORD;
+  let email = req.body.email;
+  let name = req.body.firstname +" "+ req.body.lastname
+  let nif = req.body.NIF;
+  let rua = req.body.rua;
+  let cidade =req.body.cidade;
+  let zip = req.body.zip;
+  
+  let options = {
+    'method': 'GET',
+    'url': `https://api.moloni.pt/v1/grant/?grant_type=password&client_id=${client_id}&client_secret=${client_secret}&username=${emailmoloni}&password=${password}`,
+    'headers': {
+      'Cookie': 'PHPSESSID=0190phbrorfjpurpcu4ne5fbe0'
+    },
+    json: true
+  }
+  request(options, function (error, response) {
+    if (error){
+         throw new Error(error);
+    }
+    else{
+        token = response.body.access_token;
+        //console.log(response.body)
+        //console.log(token);
+        if(!response.body.hasOwnProperty('error')){
+            let options1 = {
+            'method': 'POST',
+            'url': `https://api.moloni.pt/v1/suppliers/insert/?access_token=${token}`,
+            'headers': {
+              'Cookie': 'PHPSESSID=0190phbrorfjpurpcu4ne5fbe0',
+              "Content-Type": 'application/x-www-form-urlencoded'
+            },
+            'form': {
+              'company_id': 176006,
+              'vat': nif,
+              'number': '20',
+              'name': name,
+              'language_id': '1',
+              'address': rua,
+              'zip_code': zip,
+              'city': cidade,
+              'country_id': 1,
+              'email': email,
+              'discount': 0,
+              'credit_limit': 0,
+              'qty_copies_document': 2,
+              'maturity_date_id': 1100532,
+              "payment_method_id": 1223263,
+              'delivery_method_id': 1251179
+
+            },
+           json: true,
+          }
+          request(options1, function (error, response) {
+            if (error){
+              console.log('erro'); 
+            }
+            else{
+              console.log(response.body)
+              console.log('bem')
+              if(response.body.valid==1){
+                pool.query('UPDATE Utilizador SET Utilizador.tipo = 2 WHERE Utilizador.email= ?', email, function(err, rows, fields){
+                  if(!err){
+                    console.log('aa')
+                    res.status(200).json({error:null, response: rows})
+                  }
+                  else{
+                    res.status(400).json({error: err})
+                  }
+                })
+              }
+              else{
+                console.log('erro2');
+                res.status(400).json({
+                  error: response.body
+                })
+              }
+            }  
+          })
+        }
+    }
+  }) 
+}
 }

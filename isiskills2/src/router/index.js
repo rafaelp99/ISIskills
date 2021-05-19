@@ -63,7 +63,26 @@ const routes = [
         next()
       }
   },
+  
+  
+  },
+  {
+    path: '/criarprofessor',
+    name: 'criarProfessor',
+    component: ()=> import('../components/criarProfessor.vue'),
+    beforeEnter: (to, from, next) =>{
+      if(store.state.logado){
+        next()
+      }
+      else{
+        next('/')
+      }
+
+    }
+
   }
+  
+
 
 ]
 

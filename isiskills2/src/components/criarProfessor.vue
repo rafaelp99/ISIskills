@@ -1,24 +1,7 @@
 <template>
-    <div class="container">
-<nav class="navbar navbar-expand-sm bg-light">
-
-  <!-- Links -->
-  <ul class="navbar-nav">
-    <li class="nav-item">
-      <a class="nav-link" @click="mudarPag1" href="#">Dados Pessoais</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" @click="mudarPag2" href="#">Editar Perfil</a>
-    </li>
-    <li class="nav-item">
-      <router-link class="nav-link" to="/criarprofessor">Registar como Professor</router-link>
-    </li>
-  </ul>
-
-</nav>
-
-        <div class="row" v-if="pagina==2">
-    <div class="form-group">  
+<div class="container">
+        <div class="row">
+            <div class="form-group">  
         <label for="email">
                 Email
             </label>
@@ -32,10 +15,10 @@
             </label>
             <input type="text"  disabled required v-model="form.lastname"> 
         
-            <label for="phone">
-                Telemóvel
+            <label for="NIF">
+                NIF
             </label>
-            <input type="text" required v-model="form.phone">
+            <input type="text" required v-model="form.NIF">
             <label for="rua">
                 Morada
             </label>
@@ -44,54 +27,26 @@
                 Cidade
             </label>
             <input type="text" required v-model="form.cidade">
-            <label for="estado">
-                Distrito
-            </label>
-            <input type="text" required v-model="form.estado">
             <label for="zip">
                 Código Postal
             </label>
             <input type="text" required v-model="form.zip">
 
             <div class="ml-auto" id="rowbtn">
-                <button class="btn btn-success float-right" @click.prevent="atualizarPerfil">Atualizar</button>
+                <button class="btn btn-success float-right" @click.prevent="criarProfessor">Atualizar</button>
             </div>
             <div class="ml-auto" id="rowbtn">
                 <button class="btn btn-danger float-right" @click="voltar">Voltar</button>
             </div>    
     </div>
         </div>
+</div>
 
-            <div class="row" id="pag1" v-else>
-        
-            <div class="col-6">
-                <p><b>Nome: </b> {{$store.state.user.Primeiro_nome + " " + $store.state.user.Ultimo_nome}}</p>
-                <p><b>Email: </b> {{$store.state.user.email}}</p>
-                <p><b>Telemóvel: </b> </p>
-                <p><b>Morada: </b> </p>
-                <p><b>Cidade: </b> </p>
-                <p><b>Código-Postal: </b> </p>
-                <p v-if="$store.state.user.tipo == 1"><b>É professor: </b> Não </p>
-                <p v-else><b>É professor: </b> Sim </p>
-                
-
-            </div>
-        </div>
-    </div>
-     
+    
 </template>
 <script>
 import axios from 'axios'
 export default {
-    pagina: 1,
-    computed: {
-        
-        user:{
-            get(){
-                return this.$store.state.user;
-            }
-        }
-    },
     mounted(){
         
         console.log(this.$store.state.user)
@@ -110,17 +65,17 @@ export default {
                 cidade: '',
                 estado: '',
                 zip: ''
-            }
+            },
         }
     },
-    methods: {
-        atualizarPerfil(){
+        methods: {
+        criarProfessor(){
             let that = this;
-            let response = axios.post('http://localhost:8080/criarClient', this.form).
+            let response = axios.post('http://localhost:8080/registarProfessor', this.form).
             then(function(res){
             if(res.status==200){
                 window.swal('Atualizado');
-                that.pagina=1;
+                that.$router.go('/perfil')
             }
             else{
                 this.$swal('Erro')
@@ -128,37 +83,13 @@ export default {
             })
         },
         voltar(){
-             this.$nextTick(() => {
-                    this.pagina=1;
-                    
-      });
-        },
-        mudarPag1(){
-            this.pagina = 1;
-        },
-        mudarPag2(){
-            this.pagina = 2;
-             console.log(this.pagina)
-        },
-        mudarPag3(){
-            this.pagina = 3;
-             console.log(this.pagina)
-            
-        },
-        verificaProfessor(){
-            if(this.$store.state.user.tipo== 1){
-                return false
-            }
-            else if(this.$store.state.user.tipo == 2){
-                return true
-            }
-        }
-        
+             this.$router.go('/perfil')
+      }
     }
 }
 </script>
 <style scoped>
-p{
+    p{
     font-size: 1.3rem;
 }
 p#titulo{

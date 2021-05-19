@@ -6,6 +6,8 @@ const controller = require('./controllers/controller')
 const app = express();
 const db = require('./config/connect')
 const session = require('express-session')
+const request = require('request');
+require('dotenv').config()
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Credentials", 'true')
@@ -41,10 +43,18 @@ app.get("/", (req, res) => {
 app.post("/criarClient", controller.createCliente)
 
 //rota login
+
 app.post("/login", controller.login)
 
+//rota criar Professor Moloni
+
+app.post('/registarProfessor', controller.criarProfessor)
+
+//rota criar curso
+
+
 // set port, listen for requests
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}.`);
+const port = process.env.PORT;
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}.`);
 });
