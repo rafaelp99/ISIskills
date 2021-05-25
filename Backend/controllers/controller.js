@@ -9,6 +9,7 @@ module.exports = {
 let email = req.body.email;
 let firstname = req.body.firstname;
 let lastname = req.body.lastname;
+let NIF = req.body.NIF;
 let website = "Isi";
 let company = "ISi";
 let phone = req.body.phone;
@@ -16,6 +17,11 @@ let rua = req.body.rua;
 let cidade = req.body.cidade;
 let estado = req.body.estado;
 let zip = req.body.zip;
+const client_id = process.env.CLIENT_ID;
+const client_secret = process.env.CLIENT_SECRET;
+const emailmoloni = process.env.EMAIL;
+const password = process.env.PASSWORD;
+let token;
 
 
 //2cea01fe-c720-43a4-97dd-d11bcde530d9
@@ -81,13 +87,107 @@ request(options, function (error, response) {
   }
   else{
     console.log(response.body)
-    res.status(200).send("sucesso")
 
+    //res.status(200).send("sucesso")
+     
+  let options1 = {
+    'method': 'GET',
+    'url': `https://api.moloni.pt/v1/grant/?grant_type=password&client_id=${client_id}&client_secret=${client_secret}&username=${emailmoloni}&password=${password}`,
+    'headers': {
+      'Cookie': 'PHPSESSID=0190phbrorfjpurpcu4ne5fbe0'
+    },
+    json: true
+  }
+  request(options1, function (error, response) {
+    if (error){
+         throw new Error(error);
+    }
+    else{
+        token = response.body.access_token;
+        
+        //console.log(token);
+        if(!response.body.hasOwnProperty('error')){
+            let options2 = {
+            'method': 'POST',
+            'url': `https://api.moloni.pt/v1/customers/getByEmail/?access_token=${token}`,
+            'headers': {
+              'Cookie': 'PHPSESSID=0190phbrorfjpurpcu4ne5fbe0',
+              "Content-Type": 'application/x-www-form-urlencoded'
+            },
+            'form': {
+              'company_id': 176006,
+               'email': email
+
+            },
+           json: true,
+          }
+          request(options2, function(error, response){
+            if (error){
+              throw new Error(error);
+         }
+         else{
+          console.log(response.body.length)
+           if(response.body.length == 0){
+              let options3 = {
+                'method': 'POST',
+                'url': `https://api.moloni.pt/v1/customers/insert/?access_token=${token}`,
+            'headers': {
+              'Cookie': 'PHPSESSID=0190phbrorfjpurpcu4ne5fbe0',
+              "Content-Type": 'application/x-www-form-urlencoded'
+            },
+            'form': {
+              'company_id': 176006,
+              'VAT': NIF,
+              'number': email,
+              'name': firstname + " " + lastname,
+              'language_id': 1,
+              'address': rua,
+              'city': cidade,
+              'country_id': 1,
+               'email': email,
+              'maturity_date_id': 1100532,
+              'copies': {
+                'document_type_id': 1,
+                'copies': 1
+              },
+              "payment_method_id": 1223263,
+              'delivery_method_id': 1251179,
+              'salesman_id': null,
+              'payment_day': null,
+              'discount': null,
+              'credit_limit': null
+
+            },
+           json: true,
+              }
+              request(options3, function(error, response){
+                if (error){
+                  throw new Error(error);
+             }
+             else{
+              if(response.body.valid==1){
+                res.status(200).send('sucesso criado')
+              }
+              else{
+                console.log(response.body)
+                res.status(400).send(response.body)
+              }
+             }
+              })
+           }
+           else if(response.body.length > 0){
+             res.status(200).send('sucesso atualizado')
+           }
+         }
+          })
   }  
 
-});
+      };
 
-},
+    })
+  }
+})
+    },
 login: function(req, res){   //npm install google-auth-library --save
 
 
@@ -180,7 +280,7 @@ criarProfessor: function(req, res){
             'form': {
               'company_id': 176006,
               'vat': nif,
-              'number': '20',
+              'number': email,
               'name': name,
               'language_id': '1',
               'address': rua,
@@ -227,5 +327,182 @@ criarProfessor: function(req, res){
         }
     }
   }) 
+},
+criarCurso: function(req, res){
+  let token;
+  
+  const client_id = process.env.CLIENT_ID;
+  const client_secret = process.env.CLIENT_SECRET;
+  const emailmoloni = process.env.EMAIL;
+  const password = process.env.PASSWORD;
+  let name = req.body.nome;
+  let resumo = req.body.resumo;
+  let email = req.body.email;
+  let count;
+
+  
+  let options = {
+    'method': 'GET',
+    'url': `https://api.moloni.pt/v1/grant/?grant_type=password&client_id=${client_id}&client_secret=${client_secret}&username=${emailmoloni}&password=${password}`,
+    'headers': {
+      'Cookie': 'PHPSESSID=0190phbrorfjpurpcu4ne5fbe0'
+    },
+    json: true
+  }
+  request(options, function (error, response) {
+    if (error){
+         throw new Error(error);
+    }
+    else{
+        token = response.body.access_token;        
+        if(!response.body.hasOwnProperty('error')){
+          let options1 = {
+            'method': 'POST',
+            'url': `https://api.moloni.pt/v1/products/count/?access_token=${token}`,
+            'headers': {
+              'Cookie': 'PHPSESSID=0190phbrorfjpurpcu4ne5fbe0',
+              "Content-Type": 'application/x-www-form-urlencoded'
+            },
+            'form': {
+              'company_id': 176006,
+              'category_id': 3586680,
+            },
+           json: true,
+          }
+          request(options1, function (error, response) {
+            if (error){
+              console.log('erro'); 
+            }
+            else{
+              count = response.body.count;
+              let options2 = {
+                'method': 'POST',
+                'url': `https://api.moloni.pt/v1/products/insert/?access_token=${token}`,
+                'headers': {
+                  'Cookie': 'PHPSESSID=0190phbrorfjpurpcu4ne5fbe0',
+                  "Content-Type": 'application/x-www-form-urlencoded'
+                },
+                'form': {
+                  'company_id': 176006,
+                  'category_id': 3586680,
+                  'type': 2,
+                  'name': name,
+                  'summary': resumo,
+                  'reference': email + count,
+                  'price': 10,              
+                  'unit_id': 1531137,
+                  'has_stock': 0,
+                  'stock': false,
+                  'exemption_reason': 'M01',
+                  'taxes': {
+                    'tax_id': 2171224,
+                    'value': 23,
+                    'order': 1,
+                    'cumulative': 0
+                  }
+                },
+               json: true,
+              }
+              request(options2, function (error, response) {
+                if (error){
+                  console.log('erro'); 
+                }
+                else{
+                  console.log(response.body)
+                  console.log('bem')
+                  if(response.body.valid==1){
+                    res.status(200).json({errors: "null"})
+                  }
+                  else{
+                    console.log('erro2');
+                    res.status(400).json({
+                      error: response.body
+                    })
+                  }
+                }  
+              })
+            }
+          }
+          )}
+    }
+  })
+},
+
+getCursos: function(req, res){
+  let token;
+  const client_id = process.env.CLIENT_ID;
+  const client_secret = process.env.CLIENT_SECRET;
+  const emailmoloni = process.env.EMAIL;
+  const password = process.env.PASSWORD;
+  let options = {
+    'method': 'GET',
+    'url': `https://api.moloni.pt/v1/grant/?grant_type=password&client_id=${client_id}&client_secret=${client_secret}&username=${emailmoloni}&password=${password}`,
+    'headers': {
+      'Cookie': 'PHPSESSID=0190phbrorfjpurpcu4ne5fbe0'
+    },
+    json: true
+  }
+  request(options, function (error, response) {
+    if (error){
+         throw new Error(error);
+    }
+    else{
+      token = response.body.access_token;
+      request.post({
+        headers: {'content-type' : 'application/x-www-form-urlencoded'},
+        url:    `https://api.moloni.pt/v1/products/getAll/?access_token=${token}`,
+        form:    { company_id: '176006', category_id: '3586680'}  
+    }, function(error, response, body) {
+        if (error) {
+            console.log(error);
+            res.send(error);
+        }
+        else {
+            
+            res.send(JSON.parse(body));
+    }
+});
+    }
+  })
+},
+getCursoId: function(req, res){
+  let token;
+  console.log(req.params)
+  const client_id = process.env.CLIENT_ID;
+  const client_secret = process.env.CLIENT_SECRET;
+  const emailmoloni = process.env.EMAIL;
+  const password = process.env.PASSWORD;
+  let idcurso = req.params.id;
+  let options = {
+    'method': 'GET',
+    'url': `https://api.moloni.pt/v1/grant/?grant_type=password&client_id=${client_id}&client_secret=${client_secret}&username=${emailmoloni}&password=${password}`,
+    'headers': {
+      'Cookie': 'PHPSESSID=0190phbrorfjpurpcu4ne5fbe0'
+    },
+    json: true
+  }
+  request(options, function (error, response) {
+    if (error){
+         throw new Error(error);
+    }
+    else{
+      token = response.body.access_token;
+      request.post({
+        headers: {'content-type' : 'application/x-www-form-urlencoded'},
+        url:    `https://api.moloni.pt/v1/products/getOne/?access_token=${token}`,
+        form:    { company_id: '176006', product_id: idcurso}  
+    }, function(error, response, body) {
+        if (error) {
+            console.log(error);
+            res.send(error);
+        }
+        else {
+         console.log(idcurso)
+          console.log(JSON.parse(body))
+            res.send(JSON.parse(body));
+    }
+});
+    }
+  })
 }
 }

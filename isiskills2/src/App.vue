@@ -10,6 +10,7 @@
                 <ul class="navlinks" style="display:flex">
                     <li><router-link to="/cursos">Cursos</router-link></li>
                     <li><router-link to="/perfil">Perfil</router-link></li>
+                    <li v-if="$store.state.user.tipo==2"><router-link to="/criarcurso">Criar curso</router-link></li>
                     <li @click="signOut()"><a @click="signOut()"><i class="fas fa-sign-in-alt"></i></a></li>
                     
                 </ul>

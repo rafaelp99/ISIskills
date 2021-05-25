@@ -1,19 +1,20 @@
 <template>
 <div class="container">
 
-<div class="row">
-  <div class="col-6">
+<div class="row" id="pagcurso">
+ 
+    <div class="col-12">
     <h1>{{data.name}}</h1>
     </div>
-    <div class="col-6"></div>
-  </div>
+    
     </div>
+</div>
    
  
 </template>
 
 <script>
-
+import axios from 'axios'
 export default {
     props : ['id'],
   data: function(){
@@ -26,7 +27,7 @@ export default {
   methods: {
    async getData(){
       let that = this
-         const res = await fetch('https://jsonplaceholder.typicode.com/users/'+this.id)
+         const res = await fetch(`http://localhost:8080/getcurso/${this.id}`)
          const data = await res.json();
          this.data= data;
          console.log(data)
@@ -48,12 +49,15 @@ mounted: function(){
   height: 100%;
   display: flex;
 }
-.row{
+div#pagcurso.row{
  height: 100%;
  margin-top: 5%;
  padding-bottom: 10%;
  padding-top: 10%;
  flex: 1;
+}
+.col-12{
+  margin-top: 5%;
 }
 
 

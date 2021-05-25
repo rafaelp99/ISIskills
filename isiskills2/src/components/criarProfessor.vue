@@ -76,6 +76,7 @@ export default {
             if(res.status==200){
                 window.swal('Atualizado');
                 that.$router.go('/perfil')
+                that.$store.user.tipo = 2;
             }
             else{
                 this.$swal('Erro')
@@ -89,6 +90,10 @@ export default {
 }
 </script>
 <style scoped>
+
+.container{
+    height: 100%;
+}
     p{
     font-size: 1.3rem;
 }

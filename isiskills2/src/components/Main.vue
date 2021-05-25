@@ -30,7 +30,7 @@
 <div class="col-9" id="filacursos" >
   
     <div class="row">
-      <div class="col-3"  v-for='curso in data' :key="curso.id" v-bind:id="curso.id"><router-link :to="'/cursos/'+curso.id"><h1>{{curso.name}}</h1></router-link>
+      <div class="col-3"  v-for='curso in data' :key="curso.id" v-bind:id="curso.product_id"><router-link :to="'/cursos/'+curso.product_id"><h1>{{curso.name}}</h1></router-link>
       </div>
       
     </div>
@@ -58,7 +58,7 @@ export default {
   methods: {
    async getData(){
       let that = this
-         const res = await fetch('https://jsonplaceholder.typicode.com/users')
+         const res = await fetch('http://localhost:8080/getcursos')
          const data = await res.json();
          this.data= data;
          console.log(data)

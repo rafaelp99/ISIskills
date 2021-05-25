@@ -31,7 +31,10 @@
                 Último nome
             </label>
             <input type="text"  disabled required v-model="form.lastname"> 
-        
+            <label for="NIF">
+                NIF
+            </label>
+            <input type="text" required v-model="form.NIF">
             <label for="phone">
                 Telemóvel
             </label>
@@ -105,6 +108,7 @@ export default {
                 email: '',
                 firstname: '',
                 lastname: '',
+                NIF: '',
                 phone: '',
                 rua: '',
                 cidade: '',
@@ -157,7 +161,8 @@ export default {
     }
 }
 </script>
-<style scoped>
+<style>
+
 p{
     font-size: 1.3rem;
 }

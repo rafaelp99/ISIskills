@@ -52,6 +52,16 @@ app.post('/registarProfessor', controller.criarProfessor)
 
 //rota criar curso
 
+app.post('/criarcurso', controller.criarCurso)
+
+//rota para ir buscar cursos
+
+app.get('/getcursos', controller.getCursos)
+
+//rota para ir buscar curso por id
+
+app.get('/getcurso/:id', controller.getCursoId)
+
 
 // set port, listen for requests
 const port = process.env.PORT;

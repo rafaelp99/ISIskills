@@ -80,6 +80,25 @@ const routes = [
 
     }
 
+  },
+  {
+    path: '/criarcurso',
+    name: 'criarCurso',
+    component: ()=> import('../components/criarCurso.vue'),
+    beforeEnter: (to, from, next) =>{
+      if(store.state.logado){
+        if(store.state.user.tipo==2){
+          next()
+        }
+        else{
+          next('/perfil')
+        }
+      }
+      else{
+        next('/')
+      }
+
+    }
   }
   
 
