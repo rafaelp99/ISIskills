@@ -77,7 +77,24 @@
                 <p v-if="$store.state.user.tipo == 1"><b>É professor: </b> Não </p>
                 <p v-else><b>É professor: </b> Sim </p>
                 
-
+            <div class="tbl-faturas">
+        <table class="table table-hover table-striped">
+            <thead>
+                <th></th>
+                <th></th>
+                
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
             </div>
         </div>
     </div>
@@ -93,6 +110,11 @@ export default {
             get(){
                 return this.$store.state.user;
             }
+        }
+    },
+    dados(){
+        return {
+            cursosComprados: {}
         }
     },
     mounted(){

@@ -5,6 +5,8 @@
  
     <div class="col-12">
     <h1>{{data.name}}</h1>
+    <p>{{data.summary}}</p>
+    <button class="btn btn-success" @click.prevent="comprarCurso">Inscrever</button>
     </div>
     
     </div>
@@ -33,6 +35,25 @@ export default {
          console.log(data)
 
   },
+  comprarCurso(){
+    let str = this.data.reference;
+    let email = this.$store.state.user.email;
+      let idProf= str.split('+')[0];
+      let date = new Date()
+      let newDate = new Date(date.setDate(date.getDate()+30))
+      let expdate = newDate.toISOString().slice(0, 10);
+     axios.post('http://localhost:8080/comprarcurso', {'idCurso': this.id, 'email': email, 'idProf': idProf, expdate})
+     .then(function(res){
+            if(res.status==200){
+                window.swal('Atualizado');
+                this.$router.go('/cursos')       
+            }
+            else if(res.status==400){
+                alert('erro')
+                window.swal('Erro')
+            }
+            })
+  }
 
 },
 mounted: function(){
@@ -44,17 +65,17 @@ mounted: function(){
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
 .container{
   height: 100%;
-  display: flex;
+  
 }
-div#pagcurso.row{
+.row{
  height: 100%;
- margin-top: 5%;
+ 
  padding-bottom: 10%;
- padding-top: 10%;
- flex: 1;
+ margin-left: 5%;
+ 
 }
 .col-12{
   margin-top: 5%;

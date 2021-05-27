@@ -62,6 +62,8 @@ app.get('/getcursos', controller.getCursos)
 
 app.get('/getcurso/:id', controller.getCursoId)
 
+app.post('/comprarcurso', controller.criarCompra)
+
 
 // set port, listen for requests
 const port = process.env.PORT;
