@@ -524,7 +524,7 @@ getCursoId: function(req, res){
 },
 criarCompra: function(req,res){
   let token;
-  console.log(req.params)
+  
   const client_id = process.env.CLIENT_ID;
   const client_secret = process.env.CLIENT_SECRET;
   const emailmoloni = process.env.EMAIL;
@@ -632,8 +632,15 @@ criarCompra: function(req,res){
   })
 },
 mostrarCompra: function(req,res){
-  let email;
+  const client_id = process.env.CLIENT_ID;
+  const client_secret = process.env.CLIENT_SECRET;
+  const emailmoloni = process.env.EMAIL;
+  const password = process.env.PASSWORD;
+  let email = req.body.email;
   let token;
+  let idCustomer;
+  let idFatura;
+  let idCurso;
   let options = {
     'method': 'GET',
     'url': `https://api.moloni.pt/v1/grant/?grant_type=password&client_id=${client_id}&client_secret=${client_secret}&username=${emailmoloni}&password=${password}`,
@@ -649,10 +656,80 @@ mostrarCompra: function(req,res){
  else{
    
    token = response.body.access_token;
+   request.post({
+    headers: {'content-type' : 'application/x-www-form-urlencoded'},
+    url:`https://api.moloni.pt/v1/customers/getByEmail/?access_token=${token}`,
+    form:{ company_id: '176006', email: email}},
+    function(error, response, body){
+      //console.log('a');
+      //console.log(JSON.parse(body)); 
+      if(error){
+        console.log(error)
+        res.send(error)
+      }
+      else if(JSON.parse(body).length> 0){        
+        idCustomer = JSON.parse(body)[0].customer_id
+        request.post({
+          headers: {'content-type' : 'application/x-www-form-urlencoded'},
+          url:`https://api.moloni.pt/v1/documents/getAll/?access_token=${token}`,
+          form:{ company_id: '176006', customer_id: idCustomer}},
+          function(error, response, body){
+            if(error){
+              console.log(error)
+              res.send(error)
+            }
+            else{
+              res.status(200).send(JSON.parse(body));
+            }
+          }
+        )
+      }
+      else{
+        console.log('aaaaaa')
+        res.status(200).send({erro: 'Registo Incompleto'})
+      }
+    }
 
-   
- }
+  )
+}
+  })
+},
+mostrarFatura: function(req, res){
+  const client_id = process.env.CLIENT_ID;
+  const client_secret = process.env.CLIENT_SECRET;
+  const emailmoloni = process.env.EMAIL;
+  const password = process.env.PASSWORD;
+  let iddocumento = req.body.document_id;
+  let options = {
+    'method': 'GET',
+    'url': `https://api.moloni.pt/v1/grant/?grant_type=password&client_id=${client_id}&client_secret=${client_secret}&username=${emailmoloni}&password=${password}`,
+    'headers': {
+      'Cookie': 'PHPSESSID=0190phbrorfjpurpcu4ne5fbe0'
+    },
+    json: true
+  }
+  request(options, function (error, response){
+      if (error){
+      throw new Error(error);
+    }
+      else{ 
+        token = response.body.access_token;
+        request.post({
+          headers: {'content-type' : 'application/x-www-form-urlencoded'},
+          url:`https://api.moloni.pt/v1/documents/getPDFLink/?access_token=${token}`,
+          form:{ company_id: '176006', document_id: iddocumento}
+        },
+        function(error, response, body){
+          if(error){
+            console.log(error)
+            res.send(error)
+          }
+          else{
+            res.status(200).send(JSON.parse(body));
+          }
+        }
+        )
+      }
   })
 }
-
 }

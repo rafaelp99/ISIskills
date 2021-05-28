@@ -80,17 +80,17 @@
             <div class="tbl-faturas">
         <table class="table table-hover table-striped">
             <thead>
-                <th></th>
+                <th>Id:</th>
+                <th>Fatura criada a:</th>
                 <th></th>
                 
             </thead>
             <tbody>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                <tr v-for="curso in cursosComprados" :key="curso.document_id" v-bind:id="curso.document_id">
+                    <td>{{curso.document_id}}</td>
+                    <td>{{curso.date}}</td>
+                    <td><a href="#" v-on:click.prevent="mostrarFatura(curso.document_id)"><i class="fas fa-copy"></i></a></td>
+                   
                 </tr>
             </tbody>
         </table>
@@ -112,17 +112,19 @@ export default {
             }
         }
     },
-    dados(){
+    dados: function(){
         return {
             cursosComprados: {}
         }
     },
     mounted(){
         
-        console.log(this.$store.state.user)
+        //console.log(this.$store.state.user)
         this.form.email = this.$store.state.user.email
         this.form.firstname= this.$store.state.user.Primeiro_nome 
         this.form.lastname=  this.$store.state.user.Ultimo_nome
+        this.getFaturas();
+
     },
     data(){
         return{
@@ -140,6 +142,23 @@ export default {
         }
     },
     methods: {
+        async getFaturas(){
+            //console.log(this.cursosComprados)
+            const response = axios.post('http://localhost:8080/getcursosinscrito', {email: this.$store.state.user.email})
+                    let nData = await response
+                    console.log(nData.data)
+                    this.cursosComprados = nData.data;
+                    console.log(this.cursosComprados)
+    
+        
+        },
+        async mostrarFatura(id){
+            const response = axios.post('http://localhost:8080/mostrarfatura', {document_id: id})
+            let urlPDF =  await response
+            console.log(urlPDF.data.url)
+            window.open(urlPDF.data.url)
+
+        },
         atualizarPerfil(){
             let that = this;
             let response = axios.post('http://localhost:8080/criarClient', this.form).

@@ -7,6 +7,7 @@ const app = express();
 const db = require('./config/connect')
 const session = require('express-session')
 const request = require('request');
+const { mostrarCompra, mostrarFatura } = require("./controllers/controller");
 require('dotenv').config()
 
 app.use((req, res, next) => {
@@ -62,8 +63,14 @@ app.get('/getcursos', controller.getCursos)
 
 app.get('/getcurso/:id', controller.getCursoId)
 
+//rota para criar fatura de uma compra de um curso
 app.post('/comprarcurso', controller.criarCompra)
 
+//rota para mostrar as faturas todas de um utilizador
+
+app.post('/getcursosinscrito', controller.mostrarCompra)
+
+app.post('/mostrarfatura', controller.mostrarFatura)
 
 // set port, listen for requests
 const port = process.env.PORT;
