@@ -372,6 +372,7 @@ criarCurso: function(req, res){
               console.log('erro'); 
             }
             else{
+              console.log(response.body.count)
               count = response.body.count;
               request.post({                          
               headers: {'content-type' : 'application/x-www-form-urlencoded'},
@@ -385,6 +386,8 @@ criarCurso: function(req, res){
                     else if(JSON.parse(body).length>0){
                       console.log(JSON.parse(body)[0].salesman_id)
                       numero = JSON.parse(body)[0].salesman_id
+                      referencia = numero+"@"+count
+                      console.log(referencia);
                       let options2 = {
                         'method': 'POST',
                         'url': `https://api.moloni.pt/v1/products/insert/?access_token=${token}`,
@@ -398,7 +401,7 @@ criarCurso: function(req, res){
                           'type': 2,
                           'name': name,
                           'summary': resumo,
-                          'reference': numero+'@'+count,
+                          'reference': referencia,
                           'price': 10,              
                           'unit_id': 1531137,
                           'has_stock': 0,
